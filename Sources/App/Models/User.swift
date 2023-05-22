@@ -28,7 +28,7 @@ final class User: Model, Content, Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("username", as: String.self, is: !.empty, customFailureDescription: "Username cannot be empty.")
         validations.add("password", as: String.self, is: !.empty, customFailureDescription: "password cannot be empty.")
-        validations.add("password", as: String.self, is: .count(6...10), customFailureDescription: "password cannot be empty.")
+        validations.add("password", as: String.self, is: .count(6...10), customFailureDescription: "passord is must short/long")
         validations.add("email", as: String.self, is: !.empty, customFailureDescription: "email cannot be empty.")
     }
 }
