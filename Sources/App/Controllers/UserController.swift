@@ -2,21 +2,24 @@ import Fluent
 import Vapor
 
 struct UserController: RouteCollection {
+    
     func boot(routes: RoutesBuilder) throws {
-        let users = routes.grouped("api")
-        users.get(use: index)
+        let api = routes.grouped("api")
+        api.get(use: index)
         /* api/register */
-        users.post("register", use: register)
-        users.group(":id") { todo in
+        api.post("register", use: register)
+        api.group(":id") { todo in
             todo.delete(use: delete)
         }
+        /* api/login */
+        api.post("login", use: login)
     }
 
     func index(req: Request) async throws -> [User] {
         try await User.query(on: req.db).all()
     }
     
-    func login(req: Request) async throws -> String {
+    func login(req: Request) async throws -> LoginResponseDTO {
         //  Decode the request
         let user = try req.content.decode(User.self)
         // Check if the user exists in the database
@@ -36,10 +39,8 @@ struct UserController: RouteCollection {
         }
         
         // generate the token and return it to the user
-        
-        
-        
-        return "Ok"
+        let authPayload = try AuthPayLoad(subject: .init(value: "Grocery App"), expiration: .init(value: .distantFuture), userId: existingUser.requireID())
+        return try LoginResponseDTO(error: false, token: req.jwt.sign(authPayload), userId: existingUser.requireID())
     }
 
     func register(req: Request) async throws -> RegisterResponseDTO {
