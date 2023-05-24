@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import GroceryAppSharedDTO
 
 struct UserController: RouteCollection {
     
