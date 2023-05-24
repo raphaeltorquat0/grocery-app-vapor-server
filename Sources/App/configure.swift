@@ -10,6 +10,7 @@ public func configure(_ app: Application) async throws {
     app.databases.use(.postgres(hostname: "localhost", username: "postgres", password: "", database: "grocerydb"), as: .psql)
     /* Register migrations*/
     app.migrations.add(CreateUsersTableMigration())
+    app.migrations.add(CreateGroceryCategoryTableMigration())
     /* Register the controllers */
     try app.register(collection: UserController())
     app.jwt.signers.use(.hs256(key: "SECRETKEY"))
