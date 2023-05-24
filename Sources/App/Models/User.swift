@@ -12,23 +12,18 @@ final class User: Model, Content, Validatable {
     /* PASSWORD */
     @Field(key: "password")
     var password: String
-    /* EMAIL */
-    @Field(key: "email")
-    var email: String
-
+    
     init() { }
 
-    init(id: UUID? = nil, username: String, password: String, email: String) {
+    init(id: UUID? = nil, username: String, password: String) {
         self.id = id
         self.username = username
         self.password = password
-        self.email = email
     }
     
     static func validations(_ validations: inout Validations) {
         validations.add("username", as: String.self, is: !.empty, customFailureDescription: "Username cannot be empty.")
         validations.add("password", as: String.self, is: !.empty, customFailureDescription: "password cannot be empty.")
         validations.add("password", as: String.self, is: .count(6...10), customFailureDescription: "passord is must short/long")
-        validations.add("email", as: String.self, is: !.empty, customFailureDescription: "email cannot be empty.")
     }
 }
