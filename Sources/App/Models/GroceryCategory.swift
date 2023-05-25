@@ -9,7 +9,7 @@ import Foundation
 import Fluent
 import Vapor
 
-final class CroceryCategory: Model, Content, Validatable {
+final class GroceryCategory: Model, Content, Validatable {
     
     static let schema = "grocery_categories"
     
