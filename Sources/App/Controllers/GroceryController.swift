@@ -14,17 +14,43 @@ class GroceryController: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
         /*
-            * /api/users/:userID
+            /* /api/users/:userID */
+            
             POST: Saving Grocery App
             * /api/users/:userId/grocery-categories
+            GET: Grocery Categories By User
+            * /api/users/:userId/grocery-categories
+            DELETE:
+            * /api/users/:userId/grocery-categories/:groceryCategoryId
          
          */
         
         let api = routes.grouped("api", "users", ":userId")
         api.post("grocery-categories", use: saveGroceryCategory)
-        /* GET: /api/users/:userId/grocery-categories */
-        
         api.get("grocery-categories", use: getGroceryCategoriesByUSer)
+        api.delete("grocery-categories", ":groceryCategoryId", use: deleteGroceryCategory)
+    }
+    
+    private func deleteGroceryCategory(req: Request) async throws -> GroceryCategoryResponseDTO {
+        
+        guard let userId = req.parameters.get("userId", as: UUID.self),
+              let groceryCategoryId = req.parameters.get("groceryCategoryId", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+        
+        guard let groceryCategory = try await GroceryCategory.query(on: req.db)
+            .filter(\.$user.$id == userId)
+            .filter(\.$id == groceryCategoryId).first() else {
+            throw Abort(.notFound)
+        }
+        
+        try await groceryCategory.delete(on: req.db)
+        
+        guard let groceryCategoryResponseDTO = GroceryCategoryResponseDTO(groceryCategory) else {
+            throw Abort(.internalServerError)
+        }
+        
+        return groceryCategoryResponseDTO
     }
     
     private func getGroceryCategoriesByUSer(req: Request) async throws -> [GroceryCategoryResponseDTO] {
@@ -37,7 +63,6 @@ class GroceryController: RouteCollection {
             .filter(\.$user.$id == userId)
             .all()
             .compactMap(GroceryCategoryResponseDTO.init)
-        
     }
     
     
