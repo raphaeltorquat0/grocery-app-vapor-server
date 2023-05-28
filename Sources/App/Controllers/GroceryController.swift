@@ -15,7 +15,9 @@ class GroceryController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         
         /*
+
          BASE API GROUPED:
+         /* /api/users/:userID */
          /* /api/users/:userID */
          POST: Saving Grocery App
          * /api/users/:userId/grocery-categories
@@ -26,6 +28,9 @@ class GroceryController: RouteCollection {
          DELETE:
          * /api/users/:userId/grocery-categories/:groceryCategoryId
          * /api/users/:UserId/grocery-categories/:groceryCategoryId/grocery-items/:groceryItemId
+         DELETE:
+         * /api/users/:userId/grocery-categories/:groceryCategoryId
+         
 
          */
         
@@ -36,9 +41,11 @@ class GroceryController: RouteCollection {
         api.post("grocery-categories", ":groceryCategoryId", "grocery-items", use: saveGroceryItem)
         api.get("grocery-categories", ":groceryCategoryId", "grocery-items", use: getGroceryItemByGroceryCategory)
         api.get("grocery-categories", ":groceryCategoryId", "grocery-items", ":groceryItemId", use: deteleGroceryItem)
+
     }
     
     private func saveGroceryItem(req: Request) async throws -> GroceryItemResponseDTO {
+        
         guard let userId = req.parameters.get("userId", as: UUID.self),
               let groceryCategoryId = req.parameters.get("groceryCategoryId", as: UUID.self) else {
             throw Abort(.badRequest)
@@ -54,10 +61,11 @@ class GroceryController: RouteCollection {
             .first() else {
             throw Abort(.notFound)
         }
+
         let groceryItemRequestDTO = try req.content.decode(GroceryItemRequestDTO.self)
-        
+
         let groceryItem = GroceryItem(title: groceryItemRequestDTO.title, price: groceryItemRequestDTO.price, quantity: groceryItemRequestDTO.quantity, groceryCategoryId: groceryCategory.id!)
-        
+
         try await groceryItem.save(on: req.db)
         
         guard let groceryItemResponseDTO = GroceryItemResponseDTO(groceryItem) else {
@@ -107,13 +115,9 @@ class GroceryController: RouteCollection {
             throw Abort(.badRequest)
         }
         
-        /* DTO for the request */
-        
         let groceryCategoryRequestDTO = try req.content.decode(GroceryCategoryRequestDTO.self)
         let groceryCategory = GroceryCategory(title: groceryCategoryRequestDTO.title, colorCode: groceryCategoryRequestDTO.colorCode, userId: userId)
         try await groceryCategory.save(on: req.db)
-        
-        /* DTO for the response*/
         
         guard let groceryCategoryResponseDTO = GroceryCategoryResponseDTO(groceryCategory) else {
             throw Abort(.internalServerError)
