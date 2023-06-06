@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Debug App",
+            "program": "${workspaceFolder:grocery-app-vapor-server}/.build/debug/App",
+            "args": [],
+            "cwd": "${workspaceFolder:grocery-app-vapor-server}",
+            "preLaunchTask": "swift: Build Debug App"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Release App",
+            "program": "${workspaceFolder:grocery-app-vapor-server}/.build/release/App",
+            "args": [],
+            "cwd": "${workspaceFolder:grocery-app-vapor-server}",
+            "preLaunchTask": "swift: Build Release App"
+        }
+    ]
+}
