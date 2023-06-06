@@ -12,7 +12,7 @@ public func configure(_ app: Application) async throws {
         postgresConfig.tlsConfiguration?.certificateVerification = .none
         app.databases.use(.postgres(configuration: postgresConfig), as: .psql)
     } else {
-        app.databases.use(.postgres(hostname: Environment.get("DB_HOST_NAME") ?? "localhost", username: Environment.get("DB_USER_NAME") ?? "postgres", password: Environment.get("DB_PASSWORD") ?? "", database: Environment.get("DB_NAME") ?? "grocerydb"), as: .psql)
+        app.databases.use(.postgres(hostname: Environment.get("DB_HOST_NAME") ?? "localhost", username: Environment.get("DB_USER_NAME") ?? "postgres", password: Environment.get("DB_PASSWORD") ?? "password", database: Environment.get("DB_NAME") ?? "grocerydb"), as: .psql)
     }
 
     
