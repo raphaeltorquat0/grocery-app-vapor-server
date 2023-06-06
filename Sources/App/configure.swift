@@ -7,7 +7,7 @@ import JWT
 public func configure(_ app: Application) async throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-    app.databases.use(.postgres(hostname: "localhost", username: "postgres", password: "", database: "grocerydb"), as: .psql)
+    app.databases.use(.postgres(hostname: Environment.get("DB_HOST_NAME") ?? "localhost", username: Environment.get("DB_USER_NAME") ?? "postgres", password: Environment.get("DB_PASSWORD") ?? "", database: Environment.get("DB_NAME") ?? "grocerydb"), as: .psql)
     /* Register migrations*/
     app.migrations.add(CreateUsersTableMigration())
     app.migrations.add(CreateGroceryCategoryTableMigration())
@@ -15,7 +15,7 @@ public func configure(_ app: Application) async throws {
     /* Register the controllers */
     try app.register(collection: UserController())
     try app.register(collection: GroceryController())
-    app.jwt.signers.use(.hs256(key: "SECRETKEY"))
+    app.jwt.signers.use(.hs256(key: Environment.get("JWT_SIGN_KEY") ?? "SECRETKEY"))
     // register routes
     try routes(app)
 }
